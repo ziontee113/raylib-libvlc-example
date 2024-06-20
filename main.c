@@ -107,17 +107,16 @@ int main(int argc, char *argv[])
         // Drop a file to load it.
         if (IsFileDropped())
         {
-            int count;
-            char** files = GetDroppedFiles(&count);
+            FilePathList droppedFiles = LoadDroppedFiles();
 
-            for(int i = 0; i < count; ++i)
+            for (int i = 0; i < (int)droppedFiles.count; i++)
             {
-                Video* new_video = add_new_video(libvlc, files[i], "file");
+                Video* new_video = add_new_video(libvlc, droppedFiles.paths[i], "file");
                 video_list = g_list_append(video_list, new_video);
                 libvlc_media_player_play(new_video->player);
             }
 
-            ClearDroppedFiles();
+            UnloadDroppedFiles(droppedFiles);
         }
 
         if (IsKeyPressed(KEY_SPACE))
